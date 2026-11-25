@@ -1,0 +1,131 @@
+{
+  "passed": 25,
+  "total": 25,
+  "rows": [
+    {
+      "id": "foreign_fee",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "annual_fee",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "reg_z",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "reg_e",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "freeze_help",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "atm_limit",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "rewards",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "autopay",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "kyc",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "closure",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "phishing",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "replacement_help",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "dispute_flow",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "transactions_step_up",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "wrong_otp",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "freeze_step_up",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "lost_card",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "injection_pan",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "injection_skip",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "advice",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "handoff_legal",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "handoff_human",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "off_topic",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "low_confidence",
+      "pass": true,
+      "detail": "pass"
+    },
+    {
+      "id": "autopay_not_a_dispute",
+      "pass": true,
+      "detail": "pass"
+    }
+  ]
+}
