@@ -171,7 +171,11 @@ type Listener = (sessionId: string) => void;
 
 type Bag = { state: DemoState; listeners: Set<Listener> };
 
-const FILE = path.join(process.cwd(), "data", "runtime.json");
+function storeFiles() {
+  const tmp = path.join("/tmp", "lumen-runtime.json");
+  if (process.env.VERCEL) return [tmp];
+  return [path.join(process.cwd(), "data", "runtime.json"), tmp];
+}
 
 function bag(): Bag {
   const g = globalThis as typeof globalThis & { __lumen?: Bag };
@@ -201,16 +205,27 @@ function touch(state: DemoState, sessionId: string) {
 }
 
 function persist(state: DemoState) {
-  fs.mkdirSync(/*turbopackIgnore: true*/ path.dirname(FILE), { recursive: true });
-  fs.writeFileSync(/*turbopackIgnore: true*/ FILE, JSON.stringify(state));
+  const body = JSON.stringify(state);
+  for (const file of storeFiles()) {
+    try {
+      fs.mkdirSync(/*turbopackIgnore: true*/ path.dirname(file), { recursive: true });
+      fs.writeFileSync(/*turbopackIgnore: true*/ file, body);
+      return;
+    } catch {
+      // The deployment filesystem is read-only. The in-memory seed still serves the demo.
+    }
+  }
 }
 
 function readDisk(): DemoState | null {
-  try {
-    return JSON.parse(fs.readFileSync(/*turbopackIgnore: true*/ FILE, "utf8")) as DemoState;
-  } catch {
-    return null;
+  for (const file of storeFiles()) {
+    try {
+      return JSON.parse(fs.readFileSync(/*turbopackIgnore: true*/ file, "utf8")) as DemoState;
+    } catch {
+      // Missing file or unreadable path. Fall through to the seed.
+    }
   }
+  return null;
 }
 
 export function resetDemoState() {
