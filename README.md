@@ -4,7 +4,7 @@ Portfolio demo by Quvantic - fictional brand, not a real business / not client w
 
 ![Dispute a charge and hand off to a person](docs/demo.gif)
 
-A support assistant for **Lumen Card**, a fictional neobank in Halden Bay. It answers from a help center, calls a mock core after a one-time code, and hands fraud, complaints, legal threats, and questions it cannot ground to a person.
+A support assistant for **Lumen Card**, a fictional neobank in Halden Bay. The widget uses a branded launcher and teaser, dispute timelines, fee cards, callback slots, and a desk that can hand the chat back to the assistant. It answers from a help center, calls a mock core after a one-time code, and hands fraud, complaints, legal threats, and questions it cannot ground to a person.
 
 Live demo: https://fintech-chat.quvantic.com
 
@@ -116,6 +116,10 @@ pnpm test:e2e
 ```
 
 Screenshots from the browser tests are in `docs/screenshots/`.
+
+![Landing](docs/screenshots/landing.png)
+![Widget](docs/screenshots/widget.png)
+![Dispute timeline](docs/screenshots/dispute.png)
 
 ## Deploy
 

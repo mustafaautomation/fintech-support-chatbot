@@ -1,9 +1,26 @@
 import fs from "node:fs";
 import path from "node:path";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { PortfolioDisclaimer } from "@/components/portfolio-disclaimer";
 
-export default async function KbPage({ params }: { params: Promise<{ slug: string }> }) {
+export function generateStaticParams() {
+  const dir = path.join(process.cwd(), "kb");
+  return fs
+    .readdirSync(dir)
+    .filter((file) => file.endsWith(".md"))
+    .map((file) => ({ slug: file.replace(/\.md$/, "") }));
+}
+
+export default function KbPage({ params }: { params: Promise<{ slug: string }> }) {
+  return (
+    <Suspense fallback={<p className="p-8 text-sm text-muted-foreground">Opening the article…</p>}>
+      <Article params={params} />
+    </Suspense>
+  );
+}
+
+async function Article({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   if (!/^[a-z0-9-]+$/.test(slug)) notFound();
   const file = path.join(process.cwd(), "kb", `${slug}.md`);

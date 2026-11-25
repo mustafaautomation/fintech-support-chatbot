@@ -1,13 +1,17 @@
 import { expect, test } from "@playwright/test";
 
+test.beforeEach(async ({ request }) => {
+  await request.post("/api/demo/reset");
+});
+
 test("widget opens and a help question is cited", async ({ page }) => {
   await page.goto("/embed-demo");
-  await page.getByRole("button", { name: "Open Lumen support chat" }).click();
+  await page.getByRole("button", { name: "Open chat with Lumen support" }).click();
   const frame = page.frameLocator('iframe[title="Lumen Card support"]');
   await frame.getByLabel("Message").fill("What is the annual fee?");
   await frame.getByRole("button", { name: "Send" }).click();
   await expect(frame.getByText("$0").first()).toBeVisible();
-  await expect(frame.getByText(/Source:/).first()).toBeVisible();
+  await expect(frame.getByTestId("citation-chip").first()).toBeVisible();
   await page.screenshot({ path: "docs/screenshots/widget.png", fullPage: true });
 });
 

@@ -420,11 +420,11 @@ export function SupportChat({
         </span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[15px] font-semibold leading-5 tracking-[-0.01em]">
-            {human ? `${BRAND.agent} · Lumen Card` : "Lumen support · Lumen Card"}
+            {human ? `${BRAND.agent} · Lumen Card` : "Lumen · Lumen Card"}
           </span>
           <span className="flex items-center gap-1 truncate text-[12px] leading-4 text-muted-foreground">
             <span className="size-1.5 rounded-full bg-success" />
-            {human ? `${BRAND.agent} · human specialist` : "Online 24/7"}
+            {human ? `${BRAND.agent} · human specialist` : session?.verified ? "Online 24/7 · Verified" : "Online 24/7 · Code 000000"}
           </span>
         </span>
         <span

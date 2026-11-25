@@ -148,6 +148,9 @@
     open = next;
     var mobile = window.matchMedia("(max-width: 639px)").matches;
     frame.style.display = next ? "block" : "none";
+    if (pills) pills.style.display = next ? "none" : "flex";
+    if (!next && !teaserOff) teaser.style.display = "block";
+    if (next) teaser.style.display = "none";
     if (!reduced && next) {
       frame.animate(
         mobile
