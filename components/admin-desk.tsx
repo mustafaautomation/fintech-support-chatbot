@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { InboxBoard } from "@/components/inbox-board";
+import { PortfolioDisclaimer } from "@/components/portfolio-disclaimer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -234,6 +235,20 @@ export function AdminDesk() {
                     <Button type="button" variant="outline" onClick={() => void resolve()} disabled={selected.status === "resolved"}>
                       Resolve
                     </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={async () => {
+                        const response = await fetch(`/api/admin/handoffs/${selected.id}/resume`, { method: "POST" });
+                        if (!response.ok) {
+                          setError("Couldn't hand the chat back to the assistant.");
+                          return;
+                        }
+                        await load();
+                      }}
+                    >
+                      Resume bot
+                    </Button>
                   </div>
                 </form>
               </>
@@ -242,6 +257,7 @@ export function AdminDesk() {
         </main>
       ) : null}
       {authed === null ? <p className="px-6 text-sm text-muted-foreground">Checking the desk sign-in…</p> : null}
+      <PortfolioDisclaimer className="px-4 pb-3 text-[11px] text-muted-foreground sm:px-6" />
     </div>
   );
 }

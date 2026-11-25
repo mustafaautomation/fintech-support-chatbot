@@ -794,6 +794,21 @@ export function postAgentReply(state: DemoState, handoffId: string, text: string
   return toPublicSession(session, state);
 }
 
+export function resumeBot(state: DemoState, handoffId: string) {
+  const handoff = state.handoffs.find((item) => item.id === handoffId);
+  if (!handoff) return null;
+  const session = getSession(state, handoff.sessionId);
+  if (!session) return null;
+  handoff.status = "resolved";
+  session.mode = "bot";
+  say(session, {
+    role: "system",
+    text: `${handoff.agentName ?? "The specialist"} handed this chat back to the assistant. Ask a question and I'll continue.`,
+  });
+  touch(state, session.id);
+  return toPublicSession(session, state);
+}
+
 export function resolveHandoff(state: DemoState, handoffId: string) {
   const handoff = state.handoffs.find((item) => item.id === handoffId);
   if (!handoff) return null;

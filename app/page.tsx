@@ -1,132 +1,238 @@
+"use client";
+
 import Link from "next/link";
-import { SiteHeader } from "@/components/site-header";
+import { Suspense, useState } from "react";
+import { Check, Monitor, Smartphone } from "lucide-react";
+import { RichCards } from "@/components/chat-cards";
 import { LumenCard } from "@/components/lumen-card";
-import { Button } from "@/components/ui/button";
+import { OpsToast } from "@/components/ops-toast";
+import { PortfolioDisclaimer } from "@/components/portfolio-disclaimer";
+import { SiteHeader } from "@/components/site-header";
+import { SiteLauncher } from "@/components/site-launcher";
+import { SupportChat } from "@/components/support-chat";
+import { BRAND, METRICS, TRY_ASKING } from "@/lib/brand";
+import type { RichCard } from "@/lib/ui-cards";
 
 const steps = [
-  { n: "01", title: "Verify", body: "Jordan Hale’s demo code is 000000. Account actions wait for it." },
-  { n: "02", title: "Read the card", body: "Recent charges come back masked. Night Market Electronics is the one to question." },
-  { n: "03", title: "Open a case", body: "The assistant files a billing-error dispute and returns a case id plus the timeline." },
-  { n: "04", title: "Hand off", body: "Fraud, a complaint, a legal threat, or an angry customer lands on the agent desk." },
+  { n: "01", title: "Channel", body: "The site chat, the embed, WhatsApp, and Messenger share one desk." },
+  { n: "02", title: "Retrieve", body: "Answers come from 21 help-center articles, with the source named." },
+  { n: "03", title: "Tools", body: "A one-time code unlocks charges, a freeze, a lost card, or a dispute." },
+  { n: "04", title: "Desk", body: "Fraud, a complaint, or a legal threat lands with a person in /admin." },
 ];
 
-const topics = [
-  ["Fees", "What is the annual fee?"],
-  ["Foreign purchases", "What is the foreign transaction fee on Lumen Reserve?"],
-  ["Disputes", "How long does a Regulation Z billing-error dispute take?"],
-  ["Freeze", "How do I freeze my card?"],
-  ["Lost card", "How long does a replacement card take?"],
-  ["Rewards", "How do rewards points redeem?"],
+const gallery: RichCard[] = [
+  {
+    kind: "transactions",
+    items: [
+      { id: "txn_1003", merchant: "City Transit", amount: "$2.75", date: "Nov 18", last4: "8821", product: "Everyday" },
+    ],
+  },
+  {
+    kind: "timeline",
+    id: "Sample",
+    status: "In review",
+    steps: [
+      { label: "Opened", detail: "The case is on the fictional core.", state: "done" },
+      { label: "In review", detail: "The merchant is asked for documents.", state: "current" },
+      { label: "Resolved", detail: "A decision posts to the thread.", state: "upcoming" },
+    ],
+  },
+  {
+    kind: "fee",
+    title: "Published fees",
+    rows: [
+      { label: "Annual fee", amount: "$0.00" },
+      { label: "Late fee, up to", amount: "$30.00" },
+    ],
+    note: "Sample range for this demo, not a bill.",
+  },
+  { kind: "status", product: "Lumen Reserve", last4: "4419", status: "active" },
+];
+
+const snippet = `<script src="${BRAND.liveUrl}/widget.js" data-endpoint="${BRAND.liveUrl}"></script>`;
+
+const does = [
+  "Answers fee and dispute questions from the help center",
+  "Shows masked charges after the demo code",
+  "Opens a dispute with a timeline and a case id",
+  "Locks the card and hands fraud to a person",
+];
+const wont = [
+  "Invent a balance, fee, or case id",
+  "Give financial, tax, or legal advice",
+  "Pretend to be a person",
+  "Promise when a payment or dispute will finish",
 ];
 
 export default function HomePage() {
+  const [copied, setCopied] = useState(false);
+  const [preview, setPreview] = useState<"desktop" | "phone">("desktop");
   return (
-    <div className="min-h-full">
+    <div className="min-h-full pb-28">
       <SiteHeader />
       <main>
-        <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-16">
+        <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Fictional neobank · Halden Bay</p>
-            <h1 className="mt-3 max-w-xl font-display text-4xl leading-[1.05] sm:text-6xl">
-              Support that can see the card, and knows when to stop.
+            <p className="text-[12px] uppercase tracking-[0.18em] text-muted-foreground">Fictional neobank · Halden Bay</p>
+            <h1 className="mt-3 max-w-xl text-[48px] font-medium leading-[1.05] tracking-[-0.03em] sm:text-[64px]">
+              Support that can <span className="font-serif italic">see the card</span>, and knows when to stop.
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Lumen Card is a portfolio demo of a support assistant. It answers from a help center, calls a mock core
-              after a one-time code, and sends fraud, complaints, and legal threats to a person.
+            <p className="mt-5 max-w-xl text-[18px] leading-7 text-muted-foreground">
+              Lumen Card answers from a help center, calls a mock core after a one-time code, and sends fraud,
+              complaints, and legal threats to a person.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Button
-                nativeButton={false}
-                render={<Link href="/chat?ask=I%20don%27t%20recognize%20the%20Night%20Market%20Electronics%20charge.%20Please%20dispute%20it." />}
-                className="h-11 px-4"
+              <button
+                type="button"
+                className="inline-flex h-11 items-center rounded-full bg-accent px-4 text-sm font-medium text-accent-foreground"
+                onClick={() => {
+                  document.getElementById("live-chat")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  window.dispatchEvent(
+                    new CustomEvent("lumen:send", { detail: "When will my payment post?" }),
+                  );
+                }}
               >
-                Dispute a charge
-              </Button>
-              <Button nativeButton={false} render={<Link href="/admin" />} variant="outline" className="h-11 px-4">
-                Open the agent desk
-              </Button>
+                Chat now
+              </button>
+              <Link
+                href="/embed-demo"
+                className="inline-flex h-11 items-center rounded-full border border-border px-4 text-sm font-medium"
+              >
+                See the embed
+              </Link>
             </div>
             <p className="mt-4 max-w-xl text-sm text-muted-foreground">
               Not a bank. Not legal, tax, or financial advice. Card numbers in this demo are fake and stay masked.
             </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {TRY_ASKING.map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  data-testid="try-asking"
+                  className="inline-flex h-9 items-center rounded-full border border-border bg-surface px-3 text-[13px] font-medium"
+                  onClick={() => {
+                    document.getElementById("live-chat")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    window.dispatchEvent(new CustomEvent("lumen:send", { detail: item.prompt }));
+                  }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+            <div data-testid="trust-panel" className="mt-6 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-[16px] border border-border bg-surface p-3">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.14em]">What it does</p>
+                <ul className="mt-2 space-y-1 text-[13px]">
+                  {does.map((item) => (
+                    <li key={item}>✓ {item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-[16px] border border-border bg-surface p-3">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.14em]">What it won&apos;t do</p>
+                <ul className="mt-2 space-y-1 text-[13px]">
+                  {wont.map((item) => (
+                    <li key={item} className="flex justify-between gap-2">
+                      <span>{item}</span>
+                      <span className="text-danger">✕</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-4">
-            <LumenCard />
-            <div className="rounded-2xl border border-border bg-card p-4 text-sm leading-relaxed">
-              <p className="font-medium">Demo profile</p>
-              <dl className="mt-3 grid grid-cols-2 gap-3">
-                <div>
-                  <dt className="text-muted-foreground">Customer</dt>
-                  <dd>Jordan Hale</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">One-time code</dt>
-                  <dd className="font-medium tracking-wide">000000</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Reserve</dt>
-                  <dd>···· 4419</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Desk password</dt>
-                  <dd>lumen-demo</dd>
-                </div>
-              </dl>
+          <div id="live-chat" data-testid="landing-hero-chat">
+            <div className="mb-2 flex justify-end gap-2">
+              <button
+                type="button"
+                data-testid="preview-desktop"
+                aria-pressed={preview === "desktop"}
+                className="inline-flex h-8 items-center gap-1 rounded-full border border-border px-2 text-[12px]"
+                onClick={() => setPreview("desktop")}
+              >
+                <Monitor className="size-3.5" /> Desktop
+              </button>
+              <button
+                type="button"
+                data-testid="preview-phone"
+                aria-pressed={preview === "phone"}
+                className="inline-flex h-8 items-center gap-1 rounded-full border border-border px-2 text-[12px]"
+                onClick={() => setPreview("phone")}
+              >
+                <Smartphone className="size-3.5" /> Phone
+              </button>
+            </div>
+            <div
+              className={`mx-auto h-[640px] ${preview === "phone" ? "w-[390px] rounded-[28px] border border-border p-2" : "w-full max-w-[400px]"}`}
+            >
+              <Suspense fallback={<p className="p-4 text-sm">Opening the desk…</p>}>
+                <SupportChat variant="frame" />
+              </Suspense>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-6xl gap-3 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+        <section data-testid="metrics-strip" className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 sm:px-6 lg:grid-cols-4">
+          {METRICS.map((item) => (
+            <div key={item.label} className="border-t border-border py-4">
+              <p className="text-[12px] text-muted-foreground">{item.label}</p>
+              <p className="mt-1 text-[28px] font-semibold leading-none tracking-[-0.03em]">{item.value}</p>
+            </div>
+          ))}
+        </section>
+
+        <section id="how" className="mx-auto grid max-w-6xl gap-3 px-4 py-14 sm:px-6 lg:grid-cols-4">
           {steps.map((step) => (
-            <article key={step.n} className="rounded-2xl border border-border bg-card p-4">
-              <p className="text-xs tracking-[0.18em] text-muted-foreground">{step.n}</p>
-              <h2 className="mt-2 font-display text-2xl">{step.title}</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
+            <article key={step.n} className="rounded-[16px] border border-border bg-surface p-4 shadow-[var(--shadow-card)]">
+              <p className="text-[12px] tracking-[0.16em] text-muted-foreground">{step.n}</p>
+              <h2 className="mt-2 text-[22px] font-medium tracking-[-0.03em]">{step.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.body}</p>
             </article>
           ))}
         </section>
 
-        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <h2 className="font-display text-3xl">Under the hood</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            One core agent serves the site chat, the embeddable widget, WhatsApp, and Messenger. With no API key it
-            stays on a deterministic demo engine. Groq is first when <code>GROQ_API_KEY</code> is set, then Gemini.
+        <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
+          <h2 className="text-[32px] font-medium tracking-[-0.03em]">What the desk can show</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+            The same cards that appear in the thread. Amounts are the fictional Halden Bay profile.
           </p>
-          <div className="mt-4 grid gap-2 text-sm sm:grid-cols-5">
-            {["Chat, widget, WhatsApp, Messenger", "Core agent", "BM25 + local embeddings", "Mock core tools", "Agent desk"].map(
-              (label) => (
-                <div key={label} className="rounded-2xl border border-border bg-card px-3 py-4 text-center">
-                  {label}
-                </div>
-              ),
-            )}
+          <div className="mt-4 grid gap-3 lg:grid-cols-[280px_1fr]">
+            <LumenCard />
+            <div className="grid gap-3 md:grid-cols-2">
+              <RichCards cards={gallery} />
+            </div>
           </div>
-          <p className="mt-4 text-sm">
-            <Link href="/embed-demo" className="underline-offset-4 hover:underline">
-              See the widget on a sample page
-            </Link>
-          </p>
         </section>
 
-        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <h2 className="font-display text-3xl">Ask the help center</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {topics.map(([label, prompt]) => (
-              <Link
-                key={label}
-                href={`/chat?ask=${encodeURIComponent(prompt)}`}
-                className="rounded-2xl border border-border bg-card px-4 py-4 hover:bg-accent"
-              >
-                <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
-                <p className="mt-2 text-sm">{prompt}</p>
-              </Link>
-            ))}
+        <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
+          <h2 className="text-[32px] font-medium tracking-[-0.03em]">Embed</h2>
+          <div className="mt-4 flex items-start justify-between gap-3 rounded-[16px] border border-border bg-surface p-4">
+            <pre className="overflow-x-auto font-mono text-[13px] leading-6">{snippet}</pre>
+            <button
+              type="button"
+              className="inline-flex h-9 items-center gap-1 rounded-full border border-border px-3 text-[13px]"
+              onClick={() => {
+                void navigator.clipboard?.writeText(snippet).then(() => setCopied(true));
+              }}
+            >
+              {copied ? <Check className="size-3.5" /> : null}
+              {copied ? "Copied" : "Copy"}
+            </button>
           </div>
         </section>
       </main>
-      <footer className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted-foreground sm:px-6">
-        Portfolio demo by Quvantic - fictional brand, not a real business / not client work
+      <footer className="mx-auto max-w-6xl space-y-2 px-4 py-8 text-sm text-muted-foreground sm:px-6">
+        <p>
+          {BRAND.address}.{" "}
+          <a className="underline-offset-2 hover:underline" href={BRAND.repoUrl}>
+            GitHub
+          </a>
+        </p>
+        <PortfolioDisclaimer />
       </footer>
+      <OpsToast />
+      <SiteLauncher />
     </div>
   );
 }
